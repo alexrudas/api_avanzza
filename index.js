@@ -61,8 +61,8 @@ async function processQueue() {
 // Inicializa el titiritero para la api del runt unofficial
 async function initializeBrowser() {
   // Si desea ver las acciones use headless: false esto para pruebas, para produccion use headless: 'new'x
-  browserInstance = await puppeteer.launch({ headless: false });
-  browserInstancePerson = await puppeteer.launch({ headless: false });
+  browserInstance = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'], });
+  browserInstancePerson = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'], });
 }
 
 async function extractDataGeneral(page) {
