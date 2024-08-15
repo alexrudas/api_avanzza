@@ -1,0 +1,24 @@
+{
+  "name": "runtunofficial",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "startV1": "node apiRuntV1",
+    "startv1": "node apiRuntV1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@wppconnect-team/wppconnect": "^1.30.3",
+    "express": "^4.19.2",
+    "jimp": "^0.22.12",
+    "puppeteer": "^22.8.0",
+    "qrcode-terminal": "^0.12.0",
+    "tesseract.js": "^5.1.0",
+    "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus"
+  }
+}
