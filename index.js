@@ -63,6 +63,7 @@ async function initializeBrowser() {
   // Si desea ver las acciones use headless: false esto para pruebas, para produccion use headless: 'new'x
   browserInstance = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'], });
   browserInstancePerson = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'], });
+  console.log("[initializeBrowser] [Browsers] [are aready]");
 }
 
 async function extractDataGeneral(page) {
@@ -140,6 +141,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
   await page.click(
     "body > div:nth-child(2) > div > div.col-lg-12.ng-scope > div.col-lg-10 > div:nth-child(1) > div.content_runt > div.panel.panel-primary.main > div:nth-child(3) > div.col-sm-9.panel-der > div > div > form > div:nth-child(9) > button"
   );
+
 
 
   await page.waitForSelector("#pnlInformacionGeneralVehiculo");
@@ -367,6 +369,7 @@ function processRequest({ req, res, plaque, license, typeDcm, requestId }) {
 
 // FUncion de scrapeo para obtener la DATA del runt ciudadano
 async function scrapeWebsitePerson(url, cedula, typeDcm) {
+  console.log("[scrapeWebsitePerson] [init]");
   const page = await browserInstancePerson.newPage();
   await page.goto(url);
 
@@ -378,11 +381,16 @@ async function scrapeWebsitePerson(url, cedula, typeDcm) {
   await select.select(typeDcm);
   await page.type("#noDocumento", cedula);
 
+  console.log("[scrapeWebsitePerson] [after] [imgCaptcha]");
+
   const selectorElement = await page.$("#imgCaptcha");
   const screenshot = await selectorElement.screenshot();
   await fs.promises.writeFile("archivo-person.jpg", screenshot);
 
   const text = await imageToText(browserInstancePerson, false);
+
+  console.log("[scrapeWebsitePerson] [after] [imageToText]");
+
 
   if (text.success == false) {
     await page.close();
@@ -390,7 +398,9 @@ async function scrapeWebsitePerson(url, cedula, typeDcm) {
   }
 
   await page.type("#captcha", text.content);
-  console.log("Captchaaaaaaaaaaaa");
+  
+  console.log("[scrapeWebsitePerson] [write] [captcha]");
+
   await page.waitForSelector(
     "body > div:nth-child(2) > div > div > div.col-lg-10 > div > div.content_runt > div > div.panel-body > div.row > div.col-sm-9.panel-der > div > div > form > div:nth-child(4) > button"
     , { timeout: 60000 });
@@ -398,6 +408,7 @@ async function scrapeWebsitePerson(url, cedula, typeDcm) {
   await page.click(
     "body > div:nth-child(2) > div > div > div.col-lg-10 > div > div.content_runt > div > div.panel-body > div.row > div.col-sm-9.panel-der > div > div > form > div:nth-child(4) > button"
   );
+  console.log("[scrapeWebsitePerson] [init] [query]");
 
   let startTime = Date.now();
 
@@ -423,6 +434,9 @@ async function scrapeWebsitePerson(url, cedula, typeDcm) {
       }
     }
   } catch (error) { }
+
+  console.log("[scrapeWebsitePerson] [init] [fill-data]");
+
 
   let data = {
     GENERAL: [],
@@ -457,6 +471,7 @@ async function scrapeWebsitePerson(url, cedula, typeDcm) {
 
       return jsonData;
     });
+    console.log("[scrapeWebsitePerson] [init] [GENERAL] ", data["GENERAL"]);
 
     if (data.length != 0 && data["GENERAL"]["estado_de_la_persona"] != "") {
       break;
