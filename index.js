@@ -112,8 +112,10 @@ async function extractDataGeneral(page) {
 
 // Funcion de scrapeo para obtener la DATA del runt
 async function scrapeWebsite(url, placa, cedula, typeDcm) {
+  console.log("[scrapeWebsite] [init] placa:", placa,"cedula:",cedula,"TypeDcm:",typeDcm );
   const page = await browserInstance.newPage();
   await page.goto(url);
+  console.log("[scrapeWebsite] [url]",url);
 
   await page.waitForSelector("#imgCaptcha");
 
@@ -121,19 +123,22 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
   await page.type("#noDocumento", cedula);
   const select = await page.$("#tipoDocumento");
   await select.select(typeDcm);
+  console.log("[scrapeWebsite] [Escribió los datos]");
 
   const selectorElement = await page.$("#imgCaptcha");
   const screenshot = await selectorElement.screenshot();
   await fs.promises.writeFile("archivo.jpg", screenshot);
+  console.log("[scrapeWebsite] [descargó la imagen] [init [imageToText]]");
 
   const text = await imageToText(browserInstance, true);
+  console.log("[scrapeWebsite] [finished [imageToText]]");
   console.log("text capchat", text);
   if (text.success == false) {
     return text;
   }
 
   await page.type("#captchatxt", text.content);
-
+  console.log("[scrapeWebsite] [wrote] [capchat]");
   await page.waitForSelector(
     "body > div:nth-child(2) > div > div.col-lg-12.ng-scope > div.col-lg-10 > div:nth-child(1) > div.content_runt > div.panel.panel-primary.main > div:nth-child(3) > div.col-sm-9.panel-der > div > div > form > div:nth-child(9) > button"
   );
@@ -142,7 +147,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
     "body > div:nth-child(2) > div > div.col-lg-12.ng-scope > div.col-lg-10 > div:nth-child(1) > div.content_runt > div.panel.panel-primary.main > div:nth-child(3) > div.col-sm-9.panel-der > div > div > form > div:nth-child(9) > button"
   );
 
-
+  console.log("[scrapeWebsite] [init] [query]");
 
   await page.waitForSelector("#pnlInformacionGeneralVehiculo");
 
@@ -168,6 +173,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
 
   const panelSelector =
     "body > div:nth-child(2) > div > div.col-lg-12.ng-scope > div.col-lg-10 > div:nth-child(1) > div.content_runt > div.panel.panel-primary.main > div:nth-child(5)";
+    console.log("[scrapeWebsite] [init] [filldata]");
   const principal = await extractDataGeneral(page);
 
   const informacion = await page.evaluate(() => {
@@ -196,7 +202,6 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
 
     return JSON.stringify(data, null, 2);
   });
-
   await page.waitForSelector(
     "body > div:nth-child(2) > div > div.col-lg-12.ng-scope > div.col-lg-10 > div:nth-child(1) > div.content_runt > div:nth-child(5) > div.panel-heading"
   );
@@ -214,6 +219,8 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
       "body > div:nth-child(2) > div > div.col-lg-12.ng-scope > div.col-lg-10 > div:nth-child(1) > div.content_runt > div:nth-child(6) > div.panel-heading > h4 > a"
     ).click();
   });
+  console.log("[scrapeWebsite] [after click in more data]");
+
 
   let data = {
     PRINCIPAL: [],
@@ -225,7 +232,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
 
   data["PRINCIPAL"] = principal;
   data["GENERAL"] = JSON.parse(informacion);
-
+  console.log("[scrapeWebsite] [Principal] [",placa,"]");
   // INFORMACIÓN SOAT
   startTime = Date.now();
   while (true) {
@@ -261,7 +268,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
       break;
     }
   }
-
+  console.log("[scrapeWebsite] [Soat] [",placa,"]");
 
   // SECCIÓN TÉCNICO MECÁNICA
   startTime = Date.now();
@@ -297,6 +304,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
     }
 
   }
+  console.log("[scrapeWebsite] [CDA] [",placa,"]");
 
 
   // SECCIÓN RCA
@@ -335,6 +343,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
     }
 
   }
+  console.log("[scrapeWebsite] [RCA] [",placa,"]");
   await page.close();
 
   return data;
@@ -369,7 +378,7 @@ function processRequest({ req, res, plaque, license, typeDcm, requestId }) {
 
 // FUncion de scrapeo para obtener la DATA del runt ciudadano
 async function scrapeWebsitePerson(url, cedula, typeDcm) {
-  console.log("[scrapeWebsitePerson] [init]");
+  console.log("[scrapeWebsitePerson] [init] n:", cedula, "TypeDcm:",typeDcm );
   const page = await browserInstancePerson.newPage();
   await page.goto(url);
 
