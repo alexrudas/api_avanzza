@@ -5,7 +5,7 @@ async function imageToText(browser, type, urlType) {
   try {
     await page.goto("https://imagetotext.online/es");
 
-    await page.waitForSelector("#submit-btn");
+    await page.waitForSelector("#os-card-section > div");
 
     // Esperar el input file
     const inputFile = await page.$('input[type="file"]');
