@@ -61,8 +61,15 @@ async function processQueue() {
 // Inicializa el titiritero para la api del runt unofficial
 async function initializeBrowser() {
   // Si desea ver las acciones use headless: false esto para pruebas, para produccion use headless: 'new'x
-  browserInstance = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'], });
-  browserInstancePerson = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox'], });
+  browserInstance = await puppeteer.launch(
+    //{ headless: false }
+    { headless: 'new', args: ['--no-sandbox'], }
+
+  );
+  browserInstancePerson = await puppeteer.launch(
+    //{ headless: false }
+    { headless: 'new', args: ['--no-sandbox'], }
+  );
   console.log("[initializeBrowser] [Browsers] [are aready]");
 }
 
@@ -112,10 +119,10 @@ async function extractDataGeneral(page) {
 
 // Funcion de scrapeo para obtener la DATA del runt
 async function scrapeWebsite(url, placa, cedula, typeDcm) {
-  console.log("[scrapeWebsite] [init] placa:", placa,"cedula:",cedula,"TypeDcm:",typeDcm );
+  console.log("[scrapeWebsite] [init] placa:", placa, "cedula:", cedula, "TypeDcm:", typeDcm);
   const page = await browserInstance.newPage();
   await page.goto(url);
-  console.log("[scrapeWebsite] [url]",url);
+  console.log("[scrapeWebsite] [url]", url);
 
   await page.waitForSelector("#imgCaptcha");
 
@@ -130,7 +137,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
   await fs.promises.writeFile("archivo.jpg", screenshot);
   console.log("[scrapeWebsite] [descargó la imagen] [init [imageToText]]");
 
-  const text = await imageToText(browserInstance, true);
+  const text = await imageToText(browserInstance, true,);
   console.log("[scrapeWebsite] [finished [imageToText]]");
   console.log("text capchat", text);
   if (text.success == false) {
@@ -173,7 +180,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
 
   const panelSelector =
     "body > div:nth-child(2) > div > div.col-lg-12.ng-scope > div.col-lg-10 > div:nth-child(1) > div.content_runt > div.panel.panel-primary.main > div:nth-child(5)";
-    console.log("[scrapeWebsite] [init] [filldata]");
+  console.log("[scrapeWebsite] [init] [filldata]");
   const principal = await extractDataGeneral(page);
 
   const informacion = await page.evaluate(() => {
@@ -232,7 +239,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
 
   data["PRINCIPAL"] = principal;
   data["GENERAL"] = JSON.parse(informacion);
-  console.log("[scrapeWebsite] [Principal] [",placa,"]");
+  console.log("[scrapeWebsite] [Principal] [", placa, "]");
   // INFORMACIÓN SOAT
   startTime = Date.now();
   while (true) {
@@ -268,7 +275,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
       break;
     }
   }
-  console.log("[scrapeWebsite] [Soat] [",placa,"]");
+  console.log("[scrapeWebsite] [Soat] [", placa, "]");
 
   // SECCIÓN TÉCNICO MECÁNICA
   startTime = Date.now();
@@ -304,7 +311,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
     }
 
   }
-  console.log("[scrapeWebsite] [CDA] [",placa,"]");
+  console.log("[scrapeWebsite] [CDA] [", placa, "]");
 
 
   // SECCIÓN RCA
@@ -343,7 +350,7 @@ async function scrapeWebsite(url, placa, cedula, typeDcm) {
     }
 
   }
-  console.log("[scrapeWebsite] [RCA] [",placa,"]");
+  console.log("[scrapeWebsite] [RCA] [", placa, "]");
   await page.close();
 
   return data;
@@ -378,7 +385,7 @@ function processRequest({ req, res, plaque, license, typeDcm, requestId }) {
 
 // FUncion de scrapeo para obtener la DATA del runt ciudadano
 async function scrapeWebsitePerson(url, cedula, typeDcm) {
-  console.log("[scrapeWebsitePerson] [init] n:", cedula, "TypeDcm:",typeDcm );
+  console.log("[scrapeWebsitePerson] [init] n:", cedula, "TypeDcm:", typeDcm);
   const page = await browserInstancePerson.newPage();
   await page.goto(url);
 
@@ -407,7 +414,7 @@ async function scrapeWebsitePerson(url, cedula, typeDcm) {
   }
 
   await page.type("#captcha", text.content);
-  
+
   console.log("[scrapeWebsitePerson] [write] [captcha]");
 
   await page.waitForSelector(

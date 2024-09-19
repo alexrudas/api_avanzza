@@ -1,60 +1,64 @@
 const path = require("path");
 
-async function imageToText(browser, type) {
+async function imageToText(browser, type, urlType) {
   const page = await browser.newPage();
-
   try {
-    await page.goto("https://www.jpgtotext.com/es/imagen-a-texto");
-    await page.waitForSelector('input[type="file"]');
+    await page.goto("https://imagetotext.online/es");
+
+    // Esperar el input file
     const inputFile = await page.$('input[type="file"]');
+
     await inputFile.uploadFile(
       path.resolve(__dirname, type ? "archivo.jpg" : "archivo-person.jpg")
     );
-    await page.waitForSelector("#extract-text-now");
 
-    await page.evaluate(() => {
-      const button = document.querySelector("#extract-text-now");
-      if (button) {
-        button.click();
-      } else {
-        console.error(
-          'No se encontró el botón con el selector "#extract-text-now"'
-        );
-      }
-    });
+    await page.waitForSelector("#submit-btn");
 
-    await page.waitForSelector("textarea", { timeout: 60000 });
+    await page.click("#submit-btn");
 
-    await page.waitForFunction(() => {
-      const textarea = document.querySelector("textarea");
-      return textarea && textarea.value !== "";
-    });
+    await page.waitForSelector(
+      "#result-sec > div.d-flex.align-items-center.justify-content-center.result-area > div.col-9.d-flex.flex-column.align-items-end.result-container > div > button:nth-child(1)"
+    );
 
-    const content = await page.evaluate(() => {
-      const textarea = document.querySelector("textarea");
-      if (textarea) {
-        console.log(textarea.value);
-        return textarea.value;
-      } else {
-        return "";
-      }
-    });
+    const content = await getTextWithTimeout(page);
 
-    if (content == "") {
-      return {
-        success: false,
-        message:
-          "Se solicita la inclusión de una representación visual más detallada que permita una mejor apreciación de los datos proporcionados.",
-      };
-    }
     await page.close();
 
-    return { success: true, content: content.trim() };
+    if (content) {
+      return { success: true, content: content };
+    } else {
+      return { success: false };
+    }
   } catch (err) {
     console.log(err);
     await page.close();
     return { success: false, message: err.message };
   }
 }
+
+const getTextWithTimeout = async (page, timeout = 30000) => {
+  return Promise.race([
+    new Promise((resolve) => {
+      const checkData = () => {
+        page
+          .evaluate(() => {
+            const data = document.querySelector("#mydata0")?.value?.trim();
+            return data;
+          })
+          .then((data) => {
+            if (data) {
+              resolve(data);
+            } else {
+              setTimeout(checkData, 500); // Revisa cada medio segundo
+            }
+          });
+      };
+      checkData();
+    }),
+    new Promise(
+      (_, reject) => setTimeout(() => reject(null), timeout) // Límite de tiempo
+    ),
+  ]);
+};
 
 module.exports = imageToText;
