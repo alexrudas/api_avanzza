@@ -16,7 +16,7 @@ async function initializeBrowser(folder) {
   browserInstance = await puppeteer.launch({
     headless: headless,
     userDataDir: userDataDir,
-    args: ['--no-sandbox'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   return browserInstance;
 }
