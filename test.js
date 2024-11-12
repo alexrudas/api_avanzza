@@ -9,7 +9,11 @@ const cheerio = require("cheerio");
     const page = await browser.newPage();
 
     await page.goto(
-      "https://www.fcm.org.co/simit/#/estado-cuenta?numDocPlacaProp=72184925"
+      "https://www.fcm.org.co/simit/#/estado-cuenta?numDocPlacaProp=72184925",
+      { 
+        waitUntil: 'load',  // Espera a que la página se haya cargado completamente
+        timeout: 60000      // Aumenta el timeout a 60 segundos
+      }
     );
 
     // Espera a que el selector esté presente en la página

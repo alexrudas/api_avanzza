@@ -60,7 +60,13 @@ async function scrapeWebsite(
 ) {
   try {
     const page = await browserInstance.newPage();
-    await page.goto(url);
+    await page.goto(url,
+      
+      { 
+        waitUntil: 'load',  // Espera a que la página se haya cargado completamente
+        timeout: 60000      // Aumenta el timeout a 60 segundos
+      }
+      );
 
     await delay(3000);
     await page.waitForSelector("#imgCaptcha");

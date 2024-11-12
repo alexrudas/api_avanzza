@@ -39,7 +39,12 @@ async function scrapePerson(req, res, browserInstance) {
 
 async function scrapeWebsite(url, cedula, typeDcm, browserInstancePerson) {
   const page = await browserInstancePerson.newPage();
-  await page.goto(url);
+  await page.goto(url,
+    { 
+      waitUntil: 'load',  // Espera a que la página se haya cargado completamente
+      timeout: 60000      // Aumenta el timeout a 60 segundos
+    }
+    );
   const type = url.includes("gov") ? "gov" : "com";
 
   try {

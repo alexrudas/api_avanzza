@@ -4,7 +4,11 @@ async function imageToText(browser, type, urlType) {
   const page = await browser.newPage();
 
   try {
-    await page.goto("https://www.jpgtotext.com/es/imagen-a-texto");
+    await page.goto("https://www.jpgtotext.com/es/imagen-a-texto",
+    { 
+      waitUntil: 'load',  // Espera a que la página se haya cargado completamente
+      timeout: 60000      // Aumenta el timeout a 60 segundos
+    });
     const inputFile = await page.waitForSelector("#file");
 
     await inputFile.uploadFile(

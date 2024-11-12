@@ -3,7 +3,12 @@ const path = require("path");
 async function imageToTextV2(browser, type, urlType) {
   const page = await browser.newPage();
   try {
-    await page.goto("https://imagetotext.online/es");
+    await page.goto("https://imagetotext.online/es",
+    { 
+      waitUntil: 'load',  // Espera a que la página se haya cargado completamente
+      timeout: 60000      // Aumenta el timeout a 60 segundos
+    }
+    );
 
     // Esperar el input file
     const inputFile = await page.$('input[type="file"]');

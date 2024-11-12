@@ -27,7 +27,11 @@ async function scrapeWebsite(license, browserInstancePerson) {
   const page = await browserInstancePerson.newPage();
   try {
     await page.goto(
-      "https://www.fcm.org.co/simit/#/estado-cuenta?numDocPlacaProp=" + license
+      "https://www.fcm.org.co/simit/#/estado-cuenta?numDocPlacaProp=" + license,
+      {
+        waitUntil: 'load',  // Espera a que la página se haya cargado completamente
+        timeout: 60000      // Aumenta el timeout a 60 segundos
+      }
     );
 
     await page.waitForSelector(
