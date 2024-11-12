@@ -8,10 +8,14 @@ async function imageToText(browser, type, urlType) {
     const inputFile = await page.waitForSelector("#file");
 
     await inputFile.uploadFile(
-      path.resolve(__dirname, type ? "archivo.jpg" : "archivo-person.jpg")
+      path.resolve(
+        __dirname,
+        "..",
+        "..",
+        type ? `archivo${urlType}.jpg` : `archivo-person-${urlType}.jpg`
+      )
     );
     await page.waitForSelector("#extract-btn");
-    await page.click("#extract-btn");
 
     await page.evaluate(() => {
       const button = document.querySelector("#extract-btn");

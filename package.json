@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node index",
     "startV1": "node apiRuntV1",
-    "startv1": "node apiRuntV1",
+    "startv2": "node apiRuntV2",
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,12 +14,18 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@wppconnect-team/wppconnect": "^1.30.3",
+    "@wppconnect-team/wppconnect": "^1.34.1",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jimp": "^0.22.12",
+    "jsdom": "^25.0.0",
     "puppeteer": "^22.8.0",
     "qrcode-terminal": "^0.12.0",
-    "tesseract.js": "^5.1.0",
-    "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus"
+    "tesseract.js": "^5.1.1",
+    "winston": "^3.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }

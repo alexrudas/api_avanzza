@@ -1,2 +1,14 @@
 node_modules
 tokens
+src/temp/user_data_5
+src/temp/user_data_4
+src/temp/user_data_3
+src/temp/user_data_2
+src/temp/user_data_1
+src/temp/user_data_shared
+*.log
+eng.traineddata
+archivocom.jpg
+archivogov.jpg
+archivo-person-com.jpg
+archivo-person-gov.jpg
